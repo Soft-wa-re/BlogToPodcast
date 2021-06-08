@@ -1,3 +1,4 @@
+
 import numpy as np
 import soundfile as sf
 import yaml
@@ -22,7 +23,7 @@ ids = processor.text_to_sequence("Recent research at Harvard has shown meditatin
 # fastspeech inference
 
 mel_before, mel_after, duration_outputs, _, _ = fastspeech2.inference(
-    input_ids=tf.expand_dims(tf.convert_to_tensor(input_ids, dtype=tf.int32), 0),
+    input_ids=tf.expand_dims(tf.convert_to_tensor(ids, dtype=tf.int32), 0),
     speaker_ids=tf.convert_to_tensor([0], dtype=tf.int32),
     speed_ratios=tf.convert_to_tensor([1.0], dtype=tf.float32),
     f0_ratios =tf.convert_to_tensor([1.0], dtype=tf.float32),
