@@ -1,14 +1,17 @@
-
 import numpy as np
 import soundfile as sf
 import yaml
-
 import tensorflow as tf
-
+import os
 from tensorflow_tts.inference import TFAutoModel
 from tensorflow_tts.inference import AutoProcessor
+from pydub import AudioSegment
+from os import listdir
+from os.path import isfile, join
+import sys
+from glob import glob
+from pathlib import Path
 
-import os
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 gpu_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -18,34 +21,24 @@ for device in gpu_devices:
 # initialize fastspeech2 model.
 fastspeech2 = TFAutoModel.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech-en")
 
-
 # initialize mb_melgan model
 mb_melgan = TFAutoModel.from_pretrained("tensorspeech/tts-mb_melgan-ljspeech-en")
-
 
 # inference
 processor = AutoProcessor.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech-en")
 
-
-from pydub import AudioSegment
-from os import listdir
-from os.path import isfile, join
-import sys
-from glob import glob
-from pathlib import Path
 mypath = "../tbeckenhauer.github.io/"
 onlyfiles = list(Path(mypath).rglob("*.markdown"))
-#print(onlyfiles)
-#onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-
 
 for f in onlyfiles:
     f = str(f)
-    print(f)
     if "_postsBacklog" in f:
         continue
+    if "vendor" in f:
+        continue
     else:
-        print(f)
+        print("generating"+f)
+
     file1 = open(f,"r")
     fileTextArr = file1.readlines()
     fileTextArr = (" ".join(line.strip() for line in fileTextArr))
@@ -73,7 +66,6 @@ for f in onlyfiles:
                 else:
                     audio_before = tf.concat([audio_before, mb_melgan.inference(mel_before)[0, :, 0]], 0)
                     audio_after = tf.concat([audio_after, mb_melgan.inference(mel_after)[0, :, 0]], 0)
-
         except:
             print("your sentence was probably too long")
             print("Unexpected error:", sys.exc_info()[0])
@@ -81,13 +73,9 @@ for f in onlyfiles:
             print(len(fTxt))
             print(fTxt)
 
-    # save to file
-    #sf.write('./audio/'+f+'.before.wav', audio_before, 22050, "PCM_16")
-    #sf.write('./audio/'+f+'.after.wav', audio_after, 22050, "PCM_16")
-    #sf.write('./audio/'+f+'.before.wav', audio_before, 22050, "FLAC")
-    sf.write(f+'.after.wav', audio_after, 22050, 'PCM_24')
-    wavFile = AudioSegment.from_wav(f+'.after.wav')
-    wavFile.export(f+'.after.mp3', format="mp3")
+    sf.write(f+'.wav', audio_after, 22050, 'PCM_24')
+    wavFile = AudioSegment.from_wav(f+'.wav')
+    wavFile.export(f+'.mp3', format="mp3")
 
 
 
