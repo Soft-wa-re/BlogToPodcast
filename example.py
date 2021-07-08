@@ -27,7 +27,9 @@ mb_melgan = TFAutoModel.from_pretrained("tensorspeech/tts-mb_melgan-ljspeech-en"
 # inference
 processor = AutoProcessor.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech-en")
 
-mypath = "../Blog_TbeckenhauerGithubIo/"
+#mypath = "../Blog_TbeckenhauerGithubIo/"
+mypath = "../tbeckenhauer.github.io/"
+
 onlyfiles = list(Path(mypath).rglob("*.markdown"))
 
 for f in onlyfiles:

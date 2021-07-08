@@ -1,0 +1,1 @@
+docker build -t blog_to_podcast .

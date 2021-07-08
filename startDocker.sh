@@ -1,0 +1,1 @@
+docker run -it -v ~/Workspace:/workspace "${perm_conf[@]}" blog_to_podcast bash
