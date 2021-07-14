@@ -1,1 +1,2 @@
-docker run -it -v ~/Workspace:/workspace "${perm_conf[@]}" blog_to_podcast bash
+docker run -it -v ~/Sync/_workspace:/home/testuser/workspace "${perm_conf[@]}" blog_to_podcast bash
+#docker run -it -u $(id -u):$(id -g) -v ~/Sync/_workspace:/home/testuser/workspace "${perm_conf[@]}" blog_to_podcast bash
