@@ -1,5 +1,5 @@
 FROM tensorflow/tensorflow:latest
-RUN apt update && apt install -y vim libsndfile1-dev zsh tmux wget git libsndfile1 ffmpeg python3-venv
+RUN apt update && apt install -y vim libsndfile1-dev zsh tmux wget git libsndfile1 ffmpeg python3-venv sudo
 RUN /usr/bin/python3 -m pip install --upgrade pip
 RUN pip install git+https://github.com/repodiac/german_transliterate.git#egg=german_transliterate
 RUN pip install soundfile numpy pydub TensorflowTTS
@@ -11,8 +11,7 @@ RUN useradd -ms /bin/bash t
 ARG UNAME=testuser
 ARG UID=1000
 ARG GID=1000
-RUN groupadd -g $GID -o $UNAME
-RUN useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME
+RUN groupadd -g $GID -o $UNAME && useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME && echo "testuser:testuser" | chpasswd && adduser testuser sudo
 USER $UNAME
 WORKDIR /home/$UNAME
 

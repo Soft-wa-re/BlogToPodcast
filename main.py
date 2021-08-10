@@ -1,7 +1,7 @@
 import numpy as np
 import soundfile as sf
-import yaml
 import tensorflow as tf
+import frontmatter
 import os
 from tensorflow_tts.inference import TFAutoModel
 from tensorflow_tts.inference import AutoProcessor
@@ -11,6 +11,7 @@ from os.path import isfile, join
 import sys
 from glob import glob
 from pathlib import Path
+import re
 
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
@@ -27,8 +28,6 @@ mb_melgan = TFAutoModel.from_pretrained("tensorspeech/tts-mb_melgan-ljspeech-en"
 # inference
 processor = AutoProcessor.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech-en")
 
-#mypath = "../Blog_TbeckenhauerGithubIo/"
-#mypath = "../tbeckenhauer.github.io/"
 mypath = "."
 
 onlyfiles = list(Path(mypath).rglob("*.markdown"))
@@ -44,12 +43,21 @@ for f in onlyfiles:
     else:
         print("generating"+f)
 
-    openFile = open(f,"r")
-    fileTextArr = openFile.readlines()
-    get_indexes = lambda x, xs: [i for (y, i) in zip(xs, range(len(xs))) if x == y]
-    frontMatterIndexes = get_indexes("---\n", fileTextArr);
-    fileTextArr = (" ".join(line.strip() for line in fileTextArr))
-    fileTextArr = fileTextArr.split('.')
+    post = frontmatter.load(f)
+    
+    content = post.content
+    content = content.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
+    content = content.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
+    content = content.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
+    content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
+    content = content.replace(".includes(...)", "Dot includes")
+    content = content.replace(".indexOf(...)", "Dot indexOf")
+    content = content.replace("https://en.wikipedia.org/wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016", "")
+    content = content.replace("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill", "")
+    content = re.sub("```javascript.*```", "", content, re.DOTALL)
+    print(content)
+    fileTextArr = content.split('\n')
+
     audio_before = None
     audio_after = None
 
