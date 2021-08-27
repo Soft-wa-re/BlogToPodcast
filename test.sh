@@ -1,1 +1,1 @@
-python example.py
+python main.py
