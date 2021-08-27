@@ -7,7 +7,7 @@ from tensorflow_tts.inference import TFAutoModel
 from tensorflow_tts.inference import AutoProcessor
 from pydub import AudioSegment
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, exists
 import sys
 from glob import glob
 from pathlib import Path
@@ -40,11 +40,17 @@ for f in onlyfiles:
         continue
     if "vendor" in f:
         continue
+    if exists(f+".mp3"):
+        print(f+".mp3" + " exists")
+        continue
+    if ('blogToPodcast' not in post.metadata):
+        print(f+" does not have blogToPodcast Key")
+        continue
     else:
         print("generating"+f)
 
     post = frontmatter.load(f)
-    
+
     content = post.content
     content = content.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
     content = content.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
@@ -55,7 +61,6 @@ for f in onlyfiles:
     content = content.replace("https://en.wikipedia.org/wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016", "")
     content = content.replace("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill", "")
     content = re.sub("```javascript.*```", "", content, re.DOTALL)
-    print(content)
     fileTextArr = content.split('\n')
 
     audio_before = None
