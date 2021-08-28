@@ -5,5 +5,6 @@ apt-get update
 apt-get install -y nvidia-docker2
 pkill -SIGHUP dockerd
 nvidia-container-cli --load-kmods info
+python /home/testuser/workspace/BlogCast/setup.py install
 #docker run -it -v ~/workspace:/workspace "${perm_conf[@]}" --runtime=nvidia tensorflow/tensorflow:latest-gpu bash
 
