@@ -7,7 +7,7 @@ setup(name='blogtopodcast',
       author='tbeckenhauer',
       author_email='thomas.beckenhauer.developer@gmail.com',
       license='MIT',
-      packages=['blogtopodcast'],
+      packages=[],
       install_requires=[
           'pyyaml',
           'python-frontmatter',

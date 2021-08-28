@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import soundfile as sf
 import tensorflow as tf
@@ -33,69 +35,82 @@ mypath = "."
 onlyfiles = list(Path(mypath).rglob("*.markdown"))
 
 for f in onlyfiles:
-    f = str(f)
-    if "_drafts" in f:
+    try: 
+        f = str(f)
+        if "_drafts" in f:
+            print("Directory not supported:" +f)
+            continue
+        if "_postsBacklog" in f:
+            print("Directory not supported:" +f)
+            continue
+        if "vendor" in f:
+            print("Directory not supported:" +f)
+            continue
+        if exists(f+".mp3"):
+            print(f+".mp3" + " exists")
+            continue
+        else:
+            print("generating"+f)
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        print("Error in file:"+f)
         continue
-    if "_postsBacklog" in f:
-        continue
-    if "vendor" in f:
-        continue
-    if exists(f+".mp3"):
-        print(f+".mp3" + " exists")
-        continue
-    if ('blogToPodcast' not in post.metadata):
-        print(f+" does not have blogToPodcast Key")
-        continue
-    else:
-        print("generating"+f)
 
-    post = frontmatter.load(f)
+    try:
+        post = frontmatter.load(f)
+        if ('blogcast' not in post.metadata):
+            print(f+" does not have blogToPodcast Key")
+            continue
 
-    content = post.content
-    content = content.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
-    content = content.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
-    content = content.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
-    content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
-    content = content.replace(".includes(...)", "Dot includes")
-    content = content.replace(".indexOf(...)", "Dot indexOf")
-    content = content.replace("https://en.wikipedia.org/wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016", "")
-    content = content.replace("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill", "")
-    content = re.sub("```javascript.*```", "", content, re.DOTALL)
-    fileTextArr = content.split('\n')
+        content = post.content
+        content = content.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
+        content = content.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
+        content = content.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
+        content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
+        content = content.replace(".includes(...)", "Dot includes")
+        content = content.replace(".indexOf(...)", "Dot indexOf")
+        content = content.replace("https://en.wikipedia.org/wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016", "")
+        content = content.replace("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill", "")
+        content = re.sub("```javascript.*```", "", content, re.DOTALL)
+        fileTextArr = content.split('\n')
 
-    audio_before = None
-    audio_after = None
+        audio_before = None
+        audio_after = None
 
-    for i, fTxt in enumerate(fileTextArr): 
-        try:
-            if(0 < len(fTxt)):
-                ids = processor.text_to_sequence(fTxt+".")
+        for i, fTxt in enumerate(fileTextArr): 
+            try:
+                if(0 < len(fTxt)):
+                    ids = processor.text_to_sequence(fTxt+".")
 
-                mel_before, mel_after, duration_outputs, _, _ = fastspeech2.inference(
-                    input_ids=tf.expand_dims(tf.convert_to_tensor(ids, dtype=tf.int32), 0),
-                    speaker_ids=tf.convert_to_tensor([0], dtype=tf.int32),
-                    speed_ratios=tf.convert_to_tensor([1.0], dtype=tf.float32),
-                    f0_ratios =tf.convert_to_tensor([1.0], dtype=tf.float32),
-                    energy_ratios =tf.convert_to_tensor([1.0], dtype=tf.float32),
-                )
+                    mel_before, mel_after, duration_outputs, _, _ = fastspeech2.inference(
+                        input_ids=tf.expand_dims(tf.convert_to_tensor(ids, dtype=tf.int32), 0),
+                        speaker_ids=tf.convert_to_tensor([0], dtype=tf.int32),
+                        speed_ratios=tf.convert_to_tensor([1.0], dtype=tf.float32),
+                        f0_ratios =tf.convert_to_tensor([1.0], dtype=tf.float32),
+                        energy_ratios =tf.convert_to_tensor([1.0], dtype=tf.float32),
+                    )
 
-                # melgan inference
-                if None == audio_before:
-                    audio_before = mb_melgan.inference(mel_before)[0, :, 0]
-                    audio_after = mb_melgan.inference(mel_after)[0, :, 0]
-                else:
-                    audio_before = tf.concat([audio_before, mb_melgan.inference(mel_before)[0, :, 0]], 0)
-                    audio_after = tf.concat([audio_after, mb_melgan.inference(mel_after)[0, :, 0]], 0)
-        except:
-            print("your sentence was probably too long")
-            print("Unexpected error:", sys.exc_info()[0])
-            print(i)
-            print(len(fTxt))
-            print(fTxt)
+                    # melgan inference
+                    if None == audio_before:
+                        audio_before = mb_melgan.inference(mel_before)[0, :, 0]
+                        audio_after = mb_melgan.inference(mel_after)[0, :, 0]
+                    else:
+                        audio_before = tf.concat([audio_before, mb_melgan.inference(mel_before)[0, :, 0]], 0)
+                        audio_after = tf.concat([audio_after, mb_melgan.inference(mel_after)[0, :, 0]], 0)
+            except:
+                print("your sentence was probably too long")
+                print("Unexpected error:", sys.exc_info()[0])
+                print(i)
+                print(len(fTxt))
+                print(fTxt)
 
-    sf.write(f+'.wav', audio_after, 22050, 'PCM_24')
-    wavFile = AudioSegment.from_wav(f+'.wav')
-    wavFile.export(f+'.mp3', format="mp3")
+        sf.write(f+'.wav', audio_after, 22050, 'PCM_24')
+        wavFile = AudioSegment.from_wav(f+'.wav')
+        wavFile.export(f+'.mp3', format="mp3")
 
-
-
+    except:
+        print(full_stack())
+        print("Unexpected error:", sys.exc_info()[0])
+        print(f)
+        print(post.metadata)
+        print(post.metadata['blogcast'])
