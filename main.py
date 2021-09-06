@@ -107,6 +107,7 @@ for f in onlyfiles:
 
         sf.write(f+'.wav', audio_after, 22050, 'PCM_24')
         wavFile = AudioSegment.from_wav(f+'.wav')
+        os.remove(f+'.wav')
         wavFile.export(f+'.mp3', format="mp3")
 
     except:
