@@ -15,6 +15,7 @@ from glob import glob
 from pathlib import Path
 import re
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # or any {'0', '1', '2'}
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 
 gpu_devices = tf.config.experimental.list_physical_devices('GPU')
@@ -72,7 +73,7 @@ for f in onlyfiles:
         content = content.replace("https://en.wikipedia.org/wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016", "")
         content = content.replace("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill", "")
         content = re.sub("```javascript.*```", "", content, re.DOTALL)
-        fileTextArr = content.split('\n')
+        fileTextArr = content.split('.')
 
         audio_before = None
         audio_after = None
@@ -109,8 +110,6 @@ for f in onlyfiles:
         wavFile.export(f+'.mp3', format="mp3")
 
     except:
-        print(full_stack())
-        print("Unexpected error:", sys.exc_info()[0])
         print(f)
         print(post.metadata)
         print(post.metadata['blogcast'])
