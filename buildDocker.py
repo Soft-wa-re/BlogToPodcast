@@ -1,3 +1,5 @@
+
+
 import os
 
-os.system('ping -c 5 localhost')
+os.system('docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t blog_to_podcast .')
