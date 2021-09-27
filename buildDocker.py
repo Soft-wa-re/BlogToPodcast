@@ -1,0 +1,5 @@
+#!/usr/local/bin/python3
+
+import subprocess
+
+subprocess.run("docker build --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t blog_to_podcast .", shell=True, check=True)
