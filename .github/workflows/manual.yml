@@ -28,5 +28,5 @@ jobs:
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          echo $DOCKER_PASSWORD
+          echo ${{ secrets.DOCKER_PASSWORD }}
           #${GITHUB_WORKSPACE}/buildDocker.sh
