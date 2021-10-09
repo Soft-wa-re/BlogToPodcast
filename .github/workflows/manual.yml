@@ -28,6 +28,5 @@ jobs:
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD_ENCRYPTED }}
         run: |
-          #${GITHUB_WORKSPACE}/buildDocker.sh
-          STUFF=$(echo $DOCKER_PASSWORD | base64 -d)
-          echo $STUFF
+          ${GITHUB_WORKSPACE}/buildDocker.sh
+          #STUFF=$(echo $DOCKER_PASSWORD | base64 -d)
