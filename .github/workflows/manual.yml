@@ -31,6 +31,7 @@ jobs:
           #${GITHUB_WORKSPACE}/buildDocker.sh
           echo Let\'s define a variable:
           VERSION_PREFIX=MyPrefix
-          echo $DOCKER_PASSWORD | base64 -d
+          STUFF=(echo $DOCKER_PASSWORD | base64 -d)
+          echo $STUFF
           echo Display the version prefix: $DOCKER_PASSWORD
           echo And use it multiple times: $VERSION_PREFIX
