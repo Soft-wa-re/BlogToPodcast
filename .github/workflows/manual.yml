@@ -25,6 +25,8 @@ jobs:
       #   run: ls ${GITHUB_WORKSPACE}
 
       - name: Build Docker
+        env:
+          DOCKER_PASSWORD: DOCKER_PASSWORD
         run: |
           echo $DOCKER_PASSWORD
           #${GITHUB_WORKSPACE}/buildDocker.sh
