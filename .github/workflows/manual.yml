@@ -1,0 +1,32 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  buildDocker:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Dry Run
+      #   run: ls ${GITHUB_WORKSPACE}
+
+      - name: Build Docker
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD_ENCRYPTED }}
+        run: |
+          ${GITHUB_WORKSPACE}/buildDocker.sh
+          #STUFF=$(echo $DOCKER_PASSWORD | base64 -d)
