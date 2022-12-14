@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Main Module: This module has basically everything even though it shouldn't """
+
 import numpy as np
 import soundfile as sf
 import tensorflow as tf
@@ -31,12 +33,12 @@ mb_melgan = TFAutoModel.from_pretrained("tensorspeech/tts-mb_melgan-ljspeech-en"
 # inference
 processor = AutoProcessor.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech-en")
 
-mypath = "."
+MY_PATH = "."
 
-onlyfiles = list(Path(mypath).rglob("*.markdown"))
+onlyfiles = list(Path(MY_PATH).rglob("*.markdown"))
 
 for f in onlyfiles:
-    try: 
+    try:
         f = str(f)
         if "_drafts" in f:
             print("Directory not supported:" +f)
@@ -59,7 +61,7 @@ for f in onlyfiles:
 
     try:
         post = frontmatter.load(f)
-        if ('blogcast' not in post.metadata):
+        if 'blogcast' not in post.metadata:
             print(f+" does not have blogToPodcast Key")
             continue
 
@@ -70,17 +72,21 @@ for f in onlyfiles:
         content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
         content = content.replace(".includes(...)", "Dot includes")
         content = content.replace(".indexOf(...)", "Dot indexOf")
-        content = content.replace("https://en.wikipedia.org/wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016", "")
-        content = content.replace("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill", "")
+        wikiEcmaPath = "https://en.wikipedia.org/\
+        wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016"
+        content = content.replace(wikiEcmaPath, "")
+        mozillaPath = "https://developer.mozilla.org/\
+        en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill"
+        content = content.replace(mozillaPath, "")
         content = re.sub("```javascript.*```", "", content, re.DOTALL)
         fileTextArr = content.split('.')
 
         audio_before = None
         audio_after = None
 
-        for i, fTxt in enumerate(fileTextArr): 
+        for i, fTxt in enumerate(fileTextArr):
             try:
-                if(0 < len(fTxt)):
+                if 0 < len(fTxt):
                     ids = processor.text_to_sequence(fTxt+".")
 
                     mel_before, mel_after, duration_outputs, _, _ = fastspeech2.inference(
@@ -96,8 +102,12 @@ for f in onlyfiles:
                         audio_before = mb_melgan.inference(mel_before)[0, :, 0]
                         audio_after = mb_melgan.inference(mel_after)[0, :, 0]
                     else:
-                        audio_before = tf.concat([audio_before, mb_melgan.inference(mel_before)[0, :, 0]], 0)
-                        audio_after = tf.concat([audio_after, mb_melgan.inference(mel_after)[0, :, 0]], 0)
+                        audio_before = tf.concat([
+                            audio_before,
+                            mb_melgan.inference(mel_before)[0, :, 0]], 0)
+                        audio_after = tf.concat([
+                            audio_after,
+                            mb_melgan.inference(mel_after)[0, :, 0]], 0)
             except:
                 print("your sentence was probably too long")
                 print("Unexpected error:", sys.exc_info()[0])

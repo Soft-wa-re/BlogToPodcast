@@ -8,6 +8,7 @@ ehthumbs.db
 Thumbs.db
 
 #Editors
+.idea
 .vscode
 .vscode/settings.json
 .vscode/settings.json.default
