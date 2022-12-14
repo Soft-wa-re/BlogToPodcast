@@ -1,3 +1,5 @@
+""" setup.py for blogcast """
+
 from setuptools import setup
 
 setup(name='blogtopodcast',

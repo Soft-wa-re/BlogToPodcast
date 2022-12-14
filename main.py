@@ -2,20 +2,17 @@
 
 """Main Module: This module has basically everything even though it shouldn't """
 
-import numpy as np
+from pathlib import Path
+import re
+import sys
+from os.path import exists
+import os
 import soundfile as sf
 import tensorflow as tf
 import frontmatter
-import os
 from tensorflow_tts.inference import TFAutoModel
 from tensorflow_tts.inference import AutoProcessor
 from pydub import AudioSegment
-from os import listdir
-from os.path import isfile, join, exists
-import sys
-from glob import glob
-from pathlib import Path
-import re
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # or any {'0', '1', '2'}
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
@@ -81,8 +78,8 @@ for f in onlyfiles:
         content = re.sub("```javascript.*```", "", content, re.DOTALL)
         fileTextArr = content.split('.')
 
-        audio_before = None
-        audio_after = None
+        AUDIO_BEFORE = None
+        AUDIO_AFTER = None
 
         for i, fTxt in enumerate(fileTextArr):
             try:
@@ -98,15 +95,15 @@ for f in onlyfiles:
                     )
 
                     # melgan inference
-                    if None == audio_before:
-                        audio_before = mb_melgan.inference(mel_before)[0, :, 0]
-                        audio_after = mb_melgan.inference(mel_after)[0, :, 0]
+                    if None is AUDIO_BEFORE:
+                        AUDIO_BEFORE = mb_melgan.inference(mel_before)[0, :, 0]
+                        AUDIO_AFTER = mb_melgan.inference(mel_after)[0, :, 0]
                     else:
-                        audio_before = tf.concat([
-                            audio_before,
+                        AUDIO_BEFORE = tf.concat([
+                            AUDIO_BEFORE,
                             mb_melgan.inference(mel_before)[0, :, 0]], 0)
-                        audio_after = tf.concat([
-                            audio_after,
+                        AUDIO_AFTER = tf.concat([
+                            AUDIO_AFTER,
                             mb_melgan.inference(mel_after)[0, :, 0]], 0)
             except:
                 print("your sentence was probably too long")
@@ -115,7 +112,7 @@ for f in onlyfiles:
                 print(len(fTxt))
                 print(fTxt)
 
-        sf.write(f+'.wav', audio_after, 22050, 'PCM_24')
+        sf.write(f+'.wav', AUDIO_AFTER, 22050, 'PCM_24')
         wavFile = AudioSegment.from_wav(f+'.wav')
         os.remove(f+'.wav')
         wavFile.export(f+'.mp3', format="mp3")

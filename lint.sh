@@ -1,6 +1,6 @@
 cd $( dirname -- "$0" )
 
 
-python3 -m pylint *.py
+python -m pylint *.py
 
 cd -
