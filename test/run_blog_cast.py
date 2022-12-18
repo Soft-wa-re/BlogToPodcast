@@ -9,4 +9,10 @@ DOCKER_CMD = """
         -v "$(pwd):/home/testuser/workspace/InputProject" blog_to_podcast ../BlogCast/main.py
 """
 
-os.system(DOCKER_CMD)
+def main() -> int:
+    """Start Docker"""
+    os.system(DOCKER_CMD)
+    return 0
+
+if __name__ == '__main__':
+    main()
