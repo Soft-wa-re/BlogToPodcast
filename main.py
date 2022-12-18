@@ -50,7 +50,7 @@ for MD_FILE in markdown_files:
             print(MD_FILE+".mp3" + " exists")
             continue
         print("generating"+MD_FILE)
-    except:
+    except: # [bare-except]
         print("Unexpected error:", sys.exc_info()[0])
         print("Error in file:"+MD_FILE)
         continue
@@ -61,21 +61,21 @@ for MD_FILE in markdown_files:
             print(MD_FILE+" does not have blogToPodcast Key")
             continue
 
-        content = post.content
-        content = content.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
-        content = content.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
-        content = content.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
-        content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
-        content = content.replace(".includes(...)", "Dot includes")
-        content = content.replace(".indexOf(...)", "Dot indexOf")
+        CONTENT = post.content
+        CONTENT = CONTENT.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
+        CONTENT = CONTENT.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
+        CONTENT = CONTENT.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
+        CONTENT = CONTENT.replace("String.prototype.includes(...) >= 0", "String Dot includes")
+        CONTENT = CONTENT.replace(".includes(...)", "Dot includes")
+        CONTENT = CONTENT.replace(".indexOf(...)", "Dot indexOf")
         WIKI_ECMA_PATH = "https://en.wikipedia.org/\
         wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016"
-        content = content.replace(WIKI_ECMA_PATH, "")
+        CONTENT = CONTENT.replace(WIKI_ECMA_PATH, "")
         MOZILLA_PATH = "https://developer.mozilla.org/\
         en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill"
-        content = content.replace(MOZILLA_PATH, "")
-        content = re.sub("```javascript.*```", "", content, re.DOTALL)
-        fileTextArr = content.split('.')
+        CONTENT = CONTENT.replace(MOZILLA_PATH, "")
+        CONTENT = re.sub("```javascript.*```", "", CONTENT, re.DOTALL)
+        fileTextArr = CONTENT.split('.')
 
         AUDIO_BEFORE = None
         AUDIO_AFTER = None
@@ -104,7 +104,7 @@ for MD_FILE in markdown_files:
                         AUDIO_AFTER = tf.concat([
                             AUDIO_AFTER,
                             mb_melgan.inference(mel_after)[0, :, 0]], 0)
-            except:
+            except: # [bare-except]
                 print("your sentence was probably too long")
                 print("Unexpected error:", sys.exc_info()[0])
                 print(i)
@@ -116,7 +116,7 @@ for MD_FILE in markdown_files:
         os.remove(MD_FILE+'.wav')
         wavFile.export(MD_FILE+'.mp3', format="mp3")
 
-    except:
+    except: # [bare-except]
         print(MD_FILE)
         print(post.metadata)
         print(post.metadata['blogcast'])
