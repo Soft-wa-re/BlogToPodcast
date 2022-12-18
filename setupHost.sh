@@ -8,6 +8,6 @@ nvidia-container-cli --load-kmods info
 pip install python-frontmatter
 pip install frontmatter
 pip install --upgrade tensorflow==2.10.0
-python /home/testuser/workspace/BlogCast/setup.py install
+# python /home/testuser/workspace/BlogCast/setup.py install
 #docker run -it -v ~/workspace:/workspace "${perm_conf[@]}" --runtime=nvidia tensorflow/tensorflow:latest-gpu bash
 

@@ -32,34 +32,33 @@ processor = AutoProcessor.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech
 
 MY_PATH = "."
 
-onlyfiles = list(Path(MY_PATH).rglob("*.markdown"))
+markdown_files = list(Path(MY_PATH).rglob("*.markdown"))
 
-for f in onlyfiles:
+for MD_FILE in markdown_files:
     try:
-        f = str(f)
-        if "_drafts" in f:
-            print("Directory not supported:" +f)
+        MD_FILE = str(MD_FILE)
+        if "_drafts" in MD_FILE:
+            print("Directory not supported:" +MD_FILE)
             continue
-        if "_postsBacklog" in f:
-            print("Directory not supported:" +f)
+        if "_postsBacklog" in MD_FILE:
+            print("Directory not supported:" +MD_FILE)
             continue
-        if "vendor" in f:
-            print("Directory not supported:" +f)
+        if "vendor" in MD_FILE:
+            print("Directory not supported:" +MD_FILE)
             continue
-        if exists(f+".mp3"):
-            print(f+".mp3" + " exists")
+        if exists(MD_FILE+".mp3"):
+            print(MD_FILE+".mp3" + " exists")
             continue
-        else:
-            print("generating"+f)
+        print("generating"+MD_FILE)
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        print("Error in file:"+f)
+        print("Error in file:"+MD_FILE)
         continue
 
     try:
-        post = frontmatter.load(f)
+        post = frontmatter.load(MD_FILE)
         if 'blogcast' not in post.metadata:
-            print(f+" does not have blogToPodcast Key")
+            print(MD_FILE+" does not have blogToPodcast Key")
             continue
 
         content = post.content
@@ -69,12 +68,12 @@ for f in onlyfiles:
         content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
         content = content.replace(".includes(...)", "Dot includes")
         content = content.replace(".indexOf(...)", "Dot indexOf")
-        wikiEcmaPath = "https://en.wikipedia.org/\
+        WIKI_ECMA_PATH = "https://en.wikipedia.org/\
         wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016"
-        content = content.replace(wikiEcmaPath, "")
-        mozillaPath = "https://developer.mozilla.org/\
+        content = content.replace(WIKI_ECMA_PATH, "")
+        MOZILLA_PATH = "https://developer.mozilla.org/\
         en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill"
-        content = content.replace(mozillaPath, "")
+        content = content.replace(MOZILLA_PATH, "")
         content = re.sub("```javascript.*```", "", content, re.DOTALL)
         fileTextArr = content.split('.')
 
@@ -112,12 +111,12 @@ for f in onlyfiles:
                 print(len(fTxt))
                 print(fTxt)
 
-        sf.write(f+'.wav', AUDIO_AFTER, 22050, 'PCM_24')
-        wavFile = AudioSegment.from_wav(f+'.wav')
-        os.remove(f+'.wav')
-        wavFile.export(f+'.mp3', format="mp3")
+        sf.write(MD_FILE+'.wav', AUDIO_AFTER, 22050, 'PCM_24')
+        wavFile = AudioSegment.from_wav(MD_FILE+'.wav')
+        os.remove(MD_FILE+'.wav')
+        wavFile.export(MD_FILE+'.mp3', format="mp3")
 
     except:
-        print(f)
+        print(MD_FILE)
         print(post.metadata)
         print(post.metadata['blogcast'])
