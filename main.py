@@ -50,7 +50,7 @@ for MD_FILE in markdown_files:
             print(MD_FILE+".mp3" + " exists")
             continue
         print("generating"+MD_FILE)
-    except: # [bare-except]
+    except: # pylint: disable=bare-except
         print("Unexpected error:", sys.exc_info()[0])
         print("Error in file:"+MD_FILE)
         continue
@@ -104,7 +104,7 @@ for MD_FILE in markdown_files:
                         AUDIO_AFTER = tf.concat([
                             AUDIO_AFTER,
                             mb_melgan.inference(mel_after)[0, :, 0]], 0)
-            except: # [bare-except]
+            except: # pylint: disable=bare-except
                 print("your sentence was probably too long")
                 print("Unexpected error:", sys.exc_info()[0])
                 print(i)
@@ -116,7 +116,7 @@ for MD_FILE in markdown_files:
         os.remove(MD_FILE+'.wav')
         wavFile.export(MD_FILE+'.mp3', format="mp3")
 
-    except: # [bare-except]
+    except: # pylint: disable=bare-except
         print(MD_FILE)
         print(post.metadata)
         print(post.metadata['blogcast'])
