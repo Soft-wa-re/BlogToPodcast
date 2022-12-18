@@ -32,7 +32,6 @@ importlib-metadata==5.0.0
 inflect==6.0.2
 jamo==0.4.1
 joblib==1.2.0
-keras==2.10.0
 Keras-Preprocessing==1.1.2
 kiwisolver==1.4.4
 libclang==14.0.6
