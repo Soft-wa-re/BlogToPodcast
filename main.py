@@ -32,51 +32,50 @@ processor = AutoProcessor.from_pretrained("tensorspeech/tts-fastspeech2-ljspeech
 
 MY_PATH = "."
 
-onlyfiles = list(Path(MY_PATH).rglob("*.markdown"))
+markdown_files = list(Path(MY_PATH).rglob("*.markdown"))
 
-for f in onlyfiles:
+for MD_FILE in markdown_files:
     try:
-        f = str(f)
-        if "_drafts" in f:
-            print("Directory not supported:" +f)
+        MD_FILE = str(MD_FILE)
+        if "_drafts" in MD_FILE:
+            print("Directory not supported:" +MD_FILE)
             continue
-        if "_postsBacklog" in f:
-            print("Directory not supported:" +f)
+        if "_postsBacklog" in MD_FILE:
+            print("Directory not supported:" +MD_FILE)
             continue
-        if "vendor" in f:
-            print("Directory not supported:" +f)
+        if "vendor" in MD_FILE:
+            print("Directory not supported:" +MD_FILE)
             continue
-        if exists(f+".mp3"):
-            print(f+".mp3" + " exists")
+        if exists(MD_FILE+".mp3"):
+            print(MD_FILE+".mp3" + " exists")
             continue
-        else:
-            print("generating"+f)
-    except:
+        print("generating"+MD_FILE)
+    except: # pylint: disable=bare-except
         print("Unexpected error:", sys.exc_info()[0])
-        print("Error in file:"+f)
+        print("Error in file:"+MD_FILE)
         continue
 
     try:
-        post = frontmatter.load(f)
+        post = frontmatter.load(MD_FILE)
         if 'blogcast' not in post.metadata:
-            print(f+" does not have blogToPodcast Key")
+            print(MD_FILE+" does not have blogToPodcast Key")
             continue
 
-        content = post.content
-        content = content.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
-        content = content.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
-        content = content.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
-        content = content.replace("String.prototype.includes(...) >= 0", "String Dot includes")
-        content = content.replace(".includes(...)", "Dot includes")
-        content = content.replace(".indexOf(...)", "Dot indexOf")
-        wikiEcmaPath = "https://en.wikipedia.org/\
+        CONTENT = post.content
+        CONTENT = CONTENT.replace("Array.prototype.indexOf(...) >= 0", "Array Dot indexOf")
+        CONTENT = CONTENT.replace("String.prototype.indexOf(...) >= 0", "String Dot indexOf")
+        CONTENT = CONTENT.replace("Array.prototype.includes(...) >= 0", "Array Dot includes")
+        CONTENT = CONTENT.replace("String.prototype.includes(...) >= 0", "String Dot includes")
+        CONTENT = CONTENT.replace(".includes(...)", "Dot includes")
+        CONTENT = CONTENT.replace(".indexOf(...)", "Dot indexOf")
+        WIKI_ECMA_PATH = "https://en.wikipedia.org/\
         wiki/ECMAScript#7th_Edition_%E2%80%93_ECMAScript_2016"
-        content = content.replace(wikiEcmaPath, "")
-        mozillaPath = "https://developer.mozilla.org/\
+        CONTENT = CONTENT.replace(WIKI_ECMA_PATH, "")
+        MOZILLA_PATH = "https://developer.mozilla.org/\
         en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#polyfill"
-        content = content.replace(mozillaPath, "")
-        content = re.sub("```javascript.*```", "", content, re.DOTALL)
-        fileTextArr = content.split('.')
+        CONTENT = CONTENT.replace(MOZILLA_PATH, "")
+        CONTENT = re.sub("```javascript.*```", "", CONTENT, re.DOTALL)
+        fileTextArr = CONTENT.split('.')
 
         AUDIO_BEFORE = None
         AUDIO_AFTER = None
@@ -105,19 +104,19 @@ for f in onlyfiles:
                         AUDIO_AFTER = tf.concat([
                             AUDIO_AFTER,
                             mb_melgan.inference(mel_after)[0, :, 0]], 0)
-            except:
+            except: # pylint: disable=bare-except
                 print("your sentence was probably too long")
                 print("Unexpected error:", sys.exc_info()[0])
                 print(i)
                 print(len(fTxt))
                 print(fTxt)
 
-        sf.write(f+'.wav', AUDIO_AFTER, 22050, 'PCM_24')
-        wavFile = AudioSegment.from_wav(f+'.wav')
-        os.remove(f+'.wav')
-        wavFile.export(f+'.mp3', format="mp3")
+        sf.write(MD_FILE+'.wav', AUDIO_AFTER, 22050, 'PCM_24')
+        wavFile = AudioSegment.from_wav(MD_FILE+'.wav')
+        os.remove(MD_FILE+'.wav')
+        wavFile.export(MD_FILE+'.mp3', format="mp3")
 
-    except:
-        print(f)
+    except: # pylint: disable=bare-except
+        print(MD_FILE)
         print(post.metadata)
         print(post.metadata['blogcast'])
