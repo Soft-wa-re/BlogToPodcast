@@ -1,0 +1,21 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  aspect-ratio: initial;
+  max-width: 25%;
+  padding: 20px;
+}
+
+.App-header {
+  min-height: 90vh;
+}
+
+.App-inputfield {
+  width: 300px;
+}
+
+.App-link {
+  color: #61dafb;
+}
