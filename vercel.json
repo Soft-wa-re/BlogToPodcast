@@ -1,9 +1,10 @@
 {
-  "functions": {
-    "api/server.py": {
-      "maxDuration": 30
+  "builds": [
+    {
+      "src": "flask-server/*.py",
+      "use": "@vercel/python"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/(.*)",
