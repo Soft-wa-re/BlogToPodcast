@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/*.py": {
+    "api/server.py": {
       "maxDuration": 30
     }
   },
