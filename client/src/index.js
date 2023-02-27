@@ -7,15 +7,16 @@ import App from './component/App';
 import About from './component/About';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-        <Navigation />
-        <Routes>
-            <Route exact path='/' element={< App />}></Route>
-            <Route exact path='/about' element={< About />}></Route>
-        </Routes>
+      <Navigation />
+      <Routes>
+        <Route exact path='/' element={< App />}></Route>
+        <Route exact path='/about' element={< About />}></Route>
+      </Routes>
     </BrowserRouter>
   </React.StrictMode>
 );
